@@ -1,15 +1,15 @@
-const API_URL = "http://127.0.0.1:8000/chat";
-
 const chatMessages = document.getElementById("chat-messages");
 const chatInput = document.getElementById("chat-input");
 const sendButton = document.getElementById("send-btn");
 
-let chatHistory = JSON.parse(localStorage.getItem("voidlure_chat") || "[]");
+let history = JSON.parse(
+    localStorage.getItem("voidlure-history") || "[]"
+);
 
 function saveHistory() {
     localStorage.setItem(
-        "voidlure_chat",
-        JSON.stringify(chatHistory)
+        "voidlure-history",
+        JSON.stringify(history)
     );
 }
 
@@ -38,15 +38,13 @@ function createMessage(sender, text, type) {
 
 function loadHistory() {
 
-    if (!chatMessages) return;
-
     chatMessages.innerHTML = "";
 
-    if (chatHistory.length === 0) {
+    if (history.length === 0) {
 
         createMessage(
             "Voidlure",
-            "Hello! I'm Voidlure Jarvis.<br>How can I help you today?",
+            "Hello! I'm Voidlure Jarvis. How can I help you today?",
             "bot-message"
         );
 
@@ -54,7 +52,7 @@ function loadHistory() {
 
     }
 
-    chatHistory.forEach(msg => {
+    history.forEach(msg => {
 
         createMessage(
             msg.sender,
@@ -78,14 +76,10 @@ async function sendMessage() {
         "user-message"
     );
 
-    chatHistory.push({
-
+    history.push({
         sender: "You",
-
         text: prompt,
-
         type: "user-message"
-
     });
 
     saveHistory();
@@ -93,133 +87,107 @@ async function sendMessage() {
     chatInput.value = "";
 
     const loading = createMessage(
-
         "Voidlure",
-
         "Thinking...",
-
         "bot-message loading"
-
     );
+
+    sendButton.disabled = true;
 
     try {
 
-        const response = await fetch(API_URL, {
+        const response = await fetch("/api/chat", {
 
             method: "POST",
 
             headers: {
-
                 "Content-Type": "application/json"
-
             },
 
             body: JSON.stringify({
-
                 message: prompt
-
             })
 
         });
-
-        if (!response.ok) {
-
-            throw new Error("Server Error");
-
-        }
 
         const data = await response.json();
 
         loading.remove();
 
+        if (data.error) {
+
+            createMessage(
+                "Voidlure",
+                data.error,
+                "bot-message"
+            );
+
+            return;
+
+        }
+
         createMessage(
-
             "Voidlure",
-
             data.response,
-
             "bot-message"
-
         );
 
-        chatHistory.push({
-
+        history.push({
             sender: "Voidlure",
-
             text: data.response,
-
             type: "bot-message"
-
         });
 
         saveHistory();
 
     }
 
-    catch (error) {
+    catch (err) {
 
         loading.remove();
 
         createMessage(
-
             "Voidlure",
-
-            "Unable to connect to the backend.",
-
+            "Unable to contact the AI server.",
             "bot-message"
-
         );
 
-        console.error(error);
+        console.error(err);
+
+    }
+
+    finally {
+
+        sendButton.disabled = false;
+
+        chatInput.focus();
 
     }
 
 }
 
-function clearChat() {
+sendButton.addEventListener("click", sendMessage);
 
-    chatHistory = [];
+chatInput.addEventListener("keydown", e => {
+
+    if (e.key === "Enter") {
+
+        e.preventDefault();
+
+        sendMessage();
+
+    }
+
+});
+
+window.clearChat = () => {
+
+    history = [];
 
     saveHistory();
 
     loadHistory();
 
-}
-
-if (sendButton) {
-
-    sendButton.addEventListener(
-
-        "click",
-
-        sendMessage
-
-    );
-
-}
-
-if (chatInput) {
-
-    chatInput.addEventListener(
-
-        "keydown",
-
-        e => {
-
-            if (e.key === "Enter") {
-
-                e.preventDefault();
-
-                sendMessage();
-
-            }
-
-        }
-
-    );
-
-}
-
-window.clearVoidlureChat = clearChat;
+};
 
 loadHistory();

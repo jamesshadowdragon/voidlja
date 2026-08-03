@@ -6,15 +6,28 @@ let history = JSON.parse(
     localStorage.getItem("voidlure-history") || "[]"
 );
 
+let aiHistory = JSON.parse(
+    localStorage.getItem("voidlure-ai-history") || "[]"
+);
+
 function saveHistory() {
+
     localStorage.setItem(
         "voidlure-history",
         JSON.stringify(history)
     );
+
+    localStorage.setItem(
+        "voidlure-ai-history",
+        JSON.stringify(aiHistory)
+    );
+
 }
 
 function scrollBottom() {
+
     chatMessages.scrollTop = chatMessages.scrollHeight;
+
 }
 
 function createMessage(sender, text, type) {
@@ -82,6 +95,11 @@ async function sendMessage() {
         type: "user-message"
     });
 
+    aiHistory.push({
+        role: "user",
+        content: prompt
+    });
+
     saveHistory();
 
     chatInput.value = "";
@@ -105,7 +123,11 @@ async function sendMessage() {
             },
 
             body: JSON.stringify({
-                message: prompt
+
+                message: prompt,
+
+                history: aiHistory
+
             })
 
         });
@@ -133,10 +155,28 @@ async function sendMessage() {
         );
 
         history.push({
+
             sender: "Voidlure",
+
             text: data.response,
+
             type: "bot-message"
+
         });
+
+        aiHistory.push({
+
+            role: "assistant",
+
+            content: data.response
+
+        });
+
+        if (aiHistory.length > 20) {
+
+            aiHistory = aiHistory.slice(-20);
+
+        }
 
         saveHistory();
 
@@ -147,9 +187,13 @@ async function sendMessage() {
         loading.remove();
 
         createMessage(
+
             "Voidlure",
+
             "Unable to contact the AI server.",
+
             "bot-message"
+
         );
 
         console.error(err);
@@ -166,23 +210,31 @@ async function sendMessage() {
 
 }
 
-sendButton.addEventListener("click", sendMessage);
+sendButton.addEventListener(
+    "click",
+    sendMessage
+);
 
-chatInput.addEventListener("keydown", e => {
+chatInput.addEventListener(
+    "keydown",
+    e => {
 
-    if (e.key === "Enter") {
+        if (e.key === "Enter") {
 
-        e.preventDefault();
+            e.preventDefault();
 
-        sendMessage();
+            sendMessage();
+
+        }
 
     }
-
-});
+);
 
 window.clearChat = () => {
 
     history = [];
+
+    aiHistory = [];
 
     saveHistory();
 

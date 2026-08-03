@@ -1,0 +1,348 @@
+/* ==========================================
+   RESET
+========================================== */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html,body{
+    width:100%;
+    height:100%;
+    font-family:"Inter",sans-serif;
+    background:#050505;
+    color:#fff;
+    overflow:hidden;
+}
+
+/* ==========================================
+   BACKGROUND
+========================================== */
+
+body{
+    background:
+        radial-gradient(circle at top,#1b1b1b 0%,#090909 30%,#040404 100%);
+}
+
+#particles{
+    position:fixed;
+    inset:0;
+    z-index:0;
+    pointer-events:none;
+}
+
+/* ==========================================
+   APP LAYOUT
+========================================== */
+
+.app{
+
+    position:relative;
+    z-index:2;
+
+    display:grid;
+
+    grid-template-columns:
+        240px
+        1fr
+        340px;
+
+    height:100vh;
+}
+
+/* ==========================================
+   SIDEBAR
+========================================== */
+
+.sidebar{
+
+    background:#090909;
+
+    border-right:1px solid rgba(255,255,255,.08);
+
+    display:flex;
+
+    flex-direction:column;
+
+    padding:30px 22px;
+}
+
+.logo{
+
+    text-align:center;
+
+    margin-bottom:45px;
+}
+
+.logo img{
+
+    width:95px;
+
+    height:95px;
+
+    border-radius:50%;
+
+    object-fit:cover;
+
+    border:1px solid rgba(255,255,255,.15);
+
+    margin-bottom:18px;
+}
+
+.logo h2{
+
+    letter-spacing:5px;
+
+    font-weight:600;
+
+    font-size:22px;
+}
+
+/* ==========================================
+   NAVIGATION
+========================================== */
+
+nav{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:12px;
+}
+
+nav a{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:15px;
+
+    padding:15px 18px;
+
+    border-radius:14px;
+
+    color:#cfcfcf;
+
+    text-decoration:none;
+
+    transition:.25s;
+
+    cursor:pointer;
+}
+
+nav a:hover{
+
+    background:#131313;
+}
+
+nav a.active{
+
+    background:#ffffff;
+
+    color:#111;
+
+    font-weight:600;
+
+    box-shadow:0 0 25px rgba(255,255,255,.18);
+}
+
+nav i{
+
+    width:20px;
+
+    text-align:center;
+}
+
+/* ==========================================
+   MAIN
+========================================== */
+
+.main{
+
+    padding:28px;
+
+    overflow:auto;
+}
+
+/* ==========================================
+   TOPBAR
+========================================== */
+
+.topbar{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:28px;
+}
+
+.topbar h1{
+
+    font-size:34px;
+
+    letter-spacing:3px;
+}
+
+.topbar p{
+
+    color:#9f9f9f;
+
+    margin-top:6px;
+}
+
+.time{
+
+    text-align:right;
+}
+
+#clock{
+
+    font-size:34px;
+
+    font-weight:700;
+}
+
+#date{
+
+    color:#9d9d9d;
+
+    font-size:14px;
+}
+
+/* ==========================================
+   HERO
+========================================== */
+
+.hero{
+
+    position:relative;
+
+    overflow:hidden;
+
+    border-radius:24px;
+
+    height:360px;
+
+    border:1px solid rgba(255,255,255,.08);
+
+    background:#0d0d0d;
+
+    margin-bottom:28px;
+}
+
+.hero-image{
+
+    width:100%;
+
+    height:100%;
+
+    object-fit:cover;
+
+    opacity:.65;
+
+    filter:brightness(.75);
+}
+
+.hero-overlay{
+
+    position:absolute;
+
+    inset:0;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    align-items:center;
+
+    text-align:center;
+
+    backdrop-filter:blur(2px);
+}
+
+.hero-overlay h2{
+
+    font-size:70px;
+
+    letter-spacing:10px;
+
+    margin-bottom:10px;
+}
+
+.hero-overlay p{
+
+    letter-spacing:4px;
+
+    color:#dadada;
+}
+
+/* ==========================================
+   SEARCH
+========================================== */
+
+.search-box{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:16px;
+
+    background:#101010;
+
+    border:1px solid rgba(255,255,255,.08);
+
+    border-radius:18px;
+
+    padding:15px 18px;
+
+    margin-bottom:30px;
+}
+
+.search-box input{
+
+    flex:1;
+
+    border:none;
+
+    background:none;
+
+    outline:none;
+
+    color:#fff;
+
+    font-size:16px;
+}
+
+.search-box button{
+
+    width:48px;
+
+    height:48px;
+
+    border:none;
+
+    border-radius:12px;
+
+    background:#fff;
+
+    color:#111;
+
+    cursor:pointer;
+
+    transition:.25s;
+}
+
+.search-box button:hover{
+
+    transform:scale(1.05);
+}

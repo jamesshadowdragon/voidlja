@@ -625,3 +625,76 @@ nav i{
     }
 
 }
+/* ================= CHAT ================= */
+
+.chat-container{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:18px;
+
+}
+
+.chat-messages{
+
+    height:320px;
+
+    overflow-y:auto;
+
+    background:#0d0d0d;
+
+    border:1px solid rgba(255,255,255,.08);
+
+    border-radius:20px;
+
+    padding:20px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:15px;
+
+}
+
+.user-message{
+
+    align-self:flex-end;
+
+    background:white;
+
+    color:black;
+
+    padding:14px 18px;
+
+    border-radius:18px 18px 4px 18px;
+
+    max-width:70%;
+
+}
+
+.bot-message{
+
+    align-self:flex-start;
+
+    background:#1a1a1a;
+
+    color:white;
+
+    padding:14px 18px;
+
+    border-radius:18px 18px 18px 4px;
+
+    max-width:70%;
+
+}
+
+.loading{
+
+    opacity:.6;
+
+    font-style:italic;
+
+}

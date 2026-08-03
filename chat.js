@@ -38,10 +38,27 @@ function createMessage(sender, text, cls) {
 
     div.className = cls;
 
+    const formatted =
+        cls === "bot-message"
+            ? marked.parse(text)
+            : text.replace(/\n/g, "<br>");
+
     div.innerHTML = `
         <strong>${sender}</strong><br>
-        <span class="message-text">${text}</span>
+        <span class="message-text">${formatted}</span>
     `;
+
+    if (cls === "bot-message") {
+
+        div.querySelectorAll("pre code").forEach(block => {
+
+            hljs.highlightElement(block);
+
+        });
+
+        addCopyButtons();
+
+    }
 
     chatMessages.appendChild(div);
 
@@ -211,16 +228,17 @@ async function sendMessage() {
                     const data =
                         JSON.parse(json);
 
-                    if (data.token) {
+                   textElement.innerHTML = marked.parse(finalText);
 
-                        finalText +=
-                            data.token;
+textElement.querySelectorAll("pre code").forEach(block => {
 
-                        textElement.innerHTML =
-                            finalText
-                                .replace(/\n/g, "<br>");
+    hljs.highlightElement(block);
 
-                        scrollBottom();
+});
+
+addCopyButtons();
+
+scrollBottom();
 
                     }
 
@@ -310,6 +328,41 @@ chatInput.addEventListener(
 
 );
 
+function addCopyButtons() {
+
+    document.querySelectorAll("pre").forEach(pre => {
+
+        if (pre.querySelector(".copy-btn")) return;
+
+        const button = document.createElement("button");
+
+        button.className = "copy-btn";
+
+        button.textContent = "Copy";
+
+        button.onclick = async () => {
+
+            const code = pre.querySelector("code");
+
+            if (!code) return;
+
+            await navigator.clipboard.writeText(code.innerText);
+
+            button.textContent = "Copied!";
+
+            setTimeout(() => {
+
+                button.textContent = "Copy";
+
+            }, 1500);
+
+        };
+
+        pre.appendChild(button);
+
+    });
+
+}
 
 window.clearChat = () => {
 

@@ -15,12 +15,17 @@ export default async function handler(req, res) {
 
     try {
 
-        const { message } = req.body;
+        const {
+            message,
+            history = []
+        } = req.body;
 
-        if (!message || message.trim() === "") {
+        if (!message || !message.trim()) {
+
             return res.status(400).json({
                 error: "Message is required."
             });
+
         }
 
         const completion = await client.chat.completions.create({
@@ -33,32 +38,50 @@ export default async function handler(req, res) {
                     role: "system",
                     content: `You are Voidlure Jarvis.
 
-You are a modern AI desktop assistant.
+You are an advanced AI desktop assistant created by Voidlure.
+
+Your personality:
+
+- Friendly
+- Professional
+- Intelligent
+- Concise
+- Helpful
 
 Rules:
 
-- Be friendly.
-- Be professional.
-- Give accurate answers.
+- Always answer naturally.
 - Format code using markdown.
-- Use bullet lists when helpful.
-- Never mention OpenRouter unless asked.
-- Keep responses concise unless the user requests detail.`
+- Use bullet points when helpful.
+- Use tables when appropriate.
+- Never reveal API keys.
+- Never mention OpenRouter unless the user specifically asks.
+- If you don't know something, say so instead of making it up.
+- Remember previous conversation messages that are provided in the history.`
                 },
+
+                ...history,
 
                 {
                     role: "user",
                     content: message
                 }
 
-            ]
+            ],
+
+            temperature: 0.7,
+
+            max_tokens: 1500
 
         });
 
+        const reply =
+            completion.choices?.[0]?.message?.content ||
+            "I couldn't generate a response.";
+
         return res.status(200).json({
 
-            response:
-                completion.choices[0].message.content
+            response: reply
 
         });
 
@@ -66,11 +89,11 @@ Rules:
 
     catch (err) {
 
-        console.error(err);
+        console.error("OpenRouter Error:", err);
 
         return res.status(500).json({
 
-            error: "Internal Server Error"
+            error: "Failed to contact the AI service."
 
         });
 

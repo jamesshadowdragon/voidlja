@@ -1,0 +1,13 @@
+{
+  "name": "voidlure-jarvis",
+  "version": "1.0.0",
+  "description": "Voidlure AI Assistant",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vercel dev"
+  },
+  "dependencies": {
+    "openai": "^5.12.2"
+  }
+}

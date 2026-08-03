@@ -625,9 +625,30 @@ nav i{
     }
 
 }
-/* ================= CHAT ================= */
+/* ==========================================
+   CHAT
+========================================== */
 
 .chat-container{
+
+    display:flex;
+    flex-direction:column;
+    gap:20px;
+
+}
+
+.chat-messages{
+
+    height:450px;
+    overflow-y:auto;
+
+    padding:25px;
+
+    border-radius:22px;
+
+    background:rgba(12,12,12,.92);
+
+    border:1px solid rgba(255,255,255,.08);
 
     display:flex;
 
@@ -635,27 +656,23 @@ nav i{
 
     gap:18px;
 
+    backdrop-filter:blur(25px);
+
+    box-shadow:
+        0 20px 60px rgba(0,0,0,.45);
+
 }
 
-.chat-messages{
+.chat-messages::-webkit-scrollbar{
 
-    height:320px;
+    width:8px;
 
-    overflow-y:auto;
+}
 
-    background:#0d0d0d;
+.chat-messages::-webkit-scrollbar-thumb{
 
-    border:1px solid rgba(255,255,255,.08);
-
+    background:#444;
     border-radius:20px;
-
-    padding:20px;
-
-    display:flex;
-
-    flex-direction:column;
-
-    gap:15px;
 
 }
 
@@ -663,15 +680,23 @@ nav i{
 
     align-self:flex-end;
 
-    background:white;
+    max-width:75%;
 
-    color:black;
+    padding:16px 20px;
 
-    padding:14px 18px;
+    border-radius:20px 20px 4px 20px;
 
-    border-radius:18px 18px 4px 18px;
+    background:linear-gradient(
+        135deg,
+        #ffffff,
+        #d8d8d8
+    );
 
-    max-width:70%;
+    color:#111;
+
+    line-height:1.7;
+
+    animation:slideRight .25s ease;
 
 }
 
@@ -679,22 +704,208 @@ nav i{
 
     align-self:flex-start;
 
-    background:#1a1a1a;
+    max-width:78%;
 
-    color:white;
+    padding:16px 20px;
 
-    padding:14px 18px;
+    border-radius:20px 20px 20px 4px;
 
-    border-radius:18px 18px 18px 4px;
+    background:#171717;
 
-    max-width:70%;
+    color:#fff;
+
+    line-height:1.8;
+
+    border:1px solid rgba(255,255,255,.05);
+
+    animation:slideLeft .25s ease;
 
 }
 
-.loading{
+.message-text{
 
-    opacity:.6;
+    white-space:pre-wrap;
+    word-break:break-word;
 
-    font-style:italic;
+}
+
+.loading .message-text::after{
+
+    content:"";
+
+    display:inline-block;
+
+    width:6px;
+
+    height:18px;
+
+    margin-left:4px;
+
+    background:#fff;
+
+    animation:blink .8s infinite;
+
+}
+
+/* Markdown */
+
+.bot-message h1,
+.bot-message h2,
+.bot-message h3{
+
+    margin:16px 0 10px;
+
+}
+
+.bot-message p{
+
+    margin:10px 0;
+
+}
+
+.bot-message ul,
+.bot-message ol{
+
+    margin:10px 0 10px 24px;
+
+}
+
+.bot-message li{
+
+    margin:6px 0;
+
+}
+
+.bot-message a{
+
+    color:#ffffff;
+
+    text-decoration:underline;
+
+}
+
+.bot-message blockquote{
+
+    border-left:4px solid #ffffff;
+
+    padding-left:14px;
+
+    margin:14px 0;
+
+    opacity:.9;
+
+}
+
+/* Code */
+
+.bot-message pre{
+
+    margin:16px 0;
+
+    padding:18px;
+
+    border-radius:16px;
+
+    background:#0b0b0b;
+
+    border:1px solid rgba(255,255,255,.08);
+
+    overflow-x:auto;
+
+}
+
+.bot-message code{
+
+    font-family:
+        Consolas,
+        monospace;
+
+    font-size:.92rem;
+
+}
+
+.bot-message p code,
+.bot-message li code{
+
+    background:#2d2d2d;
+
+    padding:3px 7px;
+
+    border-radius:6px;
+
+}
+
+/* Tables */
+
+.bot-message table{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+    margin:16px 0;
+
+}
+
+.bot-message th,
+.bot-message td{
+
+    border:1px solid #333;
+
+    padding:10px;
+
+}
+
+.bot-message th{
+
+    background:#202020;
+
+}
+
+/* Animations */
+
+@keyframes slideLeft{
+
+    from{
+
+        opacity:0;
+        transform:translateX(-15px);
+
+    }
+
+    to{
+
+        opacity:1;
+        transform:none;
+
+    }
+
+}
+
+@keyframes slideRight{
+
+    from{
+
+        opacity:0;
+        transform:translateX(15px);
+
+    }
+
+    to{
+
+        opacity:1;
+        transform:none;
+
+    }
+
+}
+
+@keyframes blink{
+
+    50%{
+
+        opacity:0;
+
+    }
 
 }

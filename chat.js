@@ -2,13 +2,12 @@ const chatMessages = document.getElementById("chat-messages");
 const chatInput = document.getElementById("chat-input");
 const sendButton = document.getElementById("send-btn");
 
-let history = JSON.parse(
-    localStorage.getItem("voidlure-history") || "[]"
-);
+let history =
+    JSON.parse(localStorage.getItem("voidlure-history") || "[]");
 
-let aiHistory = JSON.parse(
-    localStorage.getItem("voidlure-ai-history") || "[]"
-);
+let aiHistory =
+    JSON.parse(localStorage.getItem("voidlure-ai-history") || "[]");
+
 
 function saveHistory() {
 
@@ -24,30 +23,34 @@ function saveHistory() {
 
 }
 
+
 function scrollBottom() {
 
-    chatMessages.scrollTop = chatMessages.scrollHeight;
+    chatMessages.scrollTop =
+        chatMessages.scrollHeight;
 
 }
 
-function createMessage(sender, text, type) {
 
-    const message = document.createElement("div");
+function createMessage(sender, text, cls) {
 
-    message.className = type;
+    const div = document.createElement("div");
 
-    message.innerHTML = `
+    div.className = cls;
+
+    div.innerHTML = `
         <strong>${sender}</strong><br>
-        ${text.replace(/\n/g, "<br>")}
+        <span class="message-text">${text}</span>
     `;
 
-    chatMessages.appendChild(message);
+    chatMessages.appendChild(div);
 
     scrollBottom();
 
-    return message;
+    return div;
 
 }
+
 
 function loadHistory() {
 
@@ -57,7 +60,7 @@ function loadHistory() {
 
         createMessage(
             "Voidlure",
-            "Hello! I'm Voidlure Jarvis. How can I help you today?",
+            "Hello! I'm Voidlure Jarvis.",
             "bot-message"
         );
 
@@ -77,6 +80,7 @@ function loadHistory() {
 
 }
 
+
 async function sendMessage() {
 
     const prompt = chatInput.value.trim();
@@ -90,27 +94,43 @@ async function sendMessage() {
     );
 
     history.push({
+
         sender: "You",
+
         text: prompt,
+
         type: "user-message"
+
     });
 
     aiHistory.push({
+
         role: "user",
+
         content: prompt
+
     });
 
     saveHistory();
 
     chatInput.value = "";
 
-    const loading = createMessage(
+    sendButton.disabled = true;
+
+    const botMessage = createMessage(
+
         "Voidlure",
-        "Thinking...",
-        "bot-message loading"
+
+        "",
+
+        "bot-message"
+
     );
 
-    sendButton.disabled = true;
+    const textElement =
+        botMessage.querySelector(".message-text");
+
+    let finalText = "";
 
     try {
 
@@ -119,7 +139,10 @@ async function sendMessage() {
             method: "POST",
 
             headers: {
-                "Content-Type": "application/json"
+
+                "Content-Type":
+                    "application/json"
+
             },
 
             body: JSON.stringify({
@@ -132,33 +155,90 @@ async function sendMessage() {
 
         });
 
-        const data = await response.json();
+        if (!response.body) {
 
-        loading.remove();
-
-        if (data.error) {
-
-            createMessage(
-                "Voidlure",
-                data.error,
-                "bot-message"
-            );
-
-            return;
+            throw new Error("Streaming unsupported.");
 
         }
 
-        createMessage(
-            "Voidlure",
-            data.response,
-            "bot-message"
-        );
+        const reader =
+            response.body.getReader();
+
+        const decoder =
+            new TextDecoder();
+
+        let buffer = "";
+
+        while (true) {
+
+            const {
+
+                value,
+
+                done
+
+            } = await reader.read();
+
+            if (done) break;
+
+            buffer += decoder.decode(
+                value,
+                {
+                    stream: true
+                }
+            );
+
+            const events =
+                buffer.split("\n\n");
+
+            buffer = events.pop();
+
+            for (const event of events) {
+
+                if (!event.startsWith("data:"))
+                    continue;
+
+                const json =
+                    event.replace(
+                        "data:",
+                        ""
+                    ).trim();
+
+                if (!json) continue;
+
+                try {
+
+                    const data =
+                        JSON.parse(json);
+
+                    if (data.token) {
+
+                        finalText +=
+                            data.token;
+
+                        textElement.innerHTML =
+                            finalText
+                                .replace(/\n/g, "<br>");
+
+                        scrollBottom();
+
+                    }
+
+                }
+
+                catch {
+
+                }
+
+            }
+
+        }
 
         history.push({
 
             sender: "Voidlure",
 
-            text: data.response,
+            text: finalText,
 
             type: "bot-message"
 
@@ -168,13 +248,14 @@ async function sendMessage() {
 
             role: "assistant",
 
-            content: data.response
+            content: finalText
 
         });
 
         if (aiHistory.length > 20) {
 
-            aiHistory = aiHistory.slice(-20);
+            aiHistory =
+                aiHistory.slice(-20);
 
         }
 
@@ -184,17 +265,8 @@ async function sendMessage() {
 
     catch (err) {
 
-        loading.remove();
-
-        createMessage(
-
-            "Voidlure",
-
-            "Unable to contact the AI server.",
-
-            "bot-message"
-
-        );
+        textElement.innerHTML =
+            "Unable to contact the AI.";
 
         console.error(err);
 
@@ -210,13 +282,20 @@ async function sendMessage() {
 
 }
 
+
 sendButton.addEventListener(
+
     "click",
+
     sendMessage
+
 );
 
+
 chatInput.addEventListener(
+
     "keydown",
+
     e => {
 
         if (e.key === "Enter") {
@@ -228,7 +307,9 @@ chatInput.addEventListener(
         }
 
     }
+
 );
+
 
 window.clearChat = () => {
 
@@ -241,5 +322,6 @@ window.clearChat = () => {
     loadHistory();
 
 };
+
 
 loadHistory();
